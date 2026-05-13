@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mail Scraper</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #bb86fc;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        input {
+            background-color: #2c2c2c;
+            color: white;
+            border: 1px solid #bb86fc;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 16px;
+            width: 300px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #1e1e1e;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+            table-layout: fixed;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+            vertical-align: top;
+            word-wrap: break-word; /* Prevents long subjects from stretching the table */
+        }
+        th {
+            background-color: #2c003e;
+            color: white;
+        }
+        tr:hover {
+            background-color: #2a2a2a;
+        }
+
+        .email-body-cell {
+            max-height: 150px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            display: block;
+            background-color: #242424;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #ccc;
+        }
+        .email-body-cell::-webkit-scrollbar { width: 8px; }
+        .email-body-cell::-webkit-scrollbar-thumb { background: #bb86fc; border-radius: 4px; }
+
+        /* Adjusted Column Widths for 4 columns */
+        th:nth-child(1) { width: 20%; } /* Sender */
+        th:nth-child(2) { width: 20%; } /* Subject */
+        th:nth-child(3) { width: 15%; } /* Date & Time */
+        th:nth-child(4) { width: 45%; } /* Email Body */
+
+        .subject-text {
+            font-weight: bold;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Mail Scraper</h1>
+
+    <div class="controls">
+        <input type="text" id="searchInput" placeholder="Search emails..." onkeyup="filterTable()">
+    </div>
+
+    <table id="emailTable">
+        <thead>
+            <tr>
+                <th>Sender</th>
+                <th>Subject</th>
+                <th>Date & Time</th>
+                <th>Email Body</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for email in emails %}
+            <tr>
+                <td>{{ email.sender }}</td>
+                <td class="subject-text">{{ email.subject }}</td>
+                <td>{{ email.date_time }}</td>
+                <td><div class="email-body-cell">{{ email.email_body }}</div></td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4" style="text-align:center;">No emails found. Run fetch_emails.py first.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        function filterTable() {
+            let searchInput = document.getElementById("searchInput").value.toLowerCase();
+            let trs = document.getElementById("emailTable").getElementsByTagName("tr");
+
+            for (let i = 1; i < trs.length; i++) {
+                let rowText = trs[i].innerText.toLowerCase();
+
+                if (rowText.includes(searchInput)) {
+                    trs[i].style.display = "";
+                } else {
+                    trs[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+</body>
+</html>
